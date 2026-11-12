@@ -1,4 +1,4 @@
-name: Build APK - Changeur de Voix
+name: Creer APK
 
 on:
   push:
@@ -9,6 +9,11 @@ jobs:
   build-apk:
     name: Creer APK
     runs-on: ubuntu-latest
+
+    env:
+      ANDROID_HOME: /usr/lib/android-sdk
+      ANDROID_SDK_ROOT: /usr/lib/android-sdk
+      JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
 
     steps:
       - name: Checkout code
@@ -25,10 +30,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Verifier SDK Android deja installe
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls -la /usr/lib/android-sdk/
+          ls -la $ANDROID_HOME/platform-tools/ | head -20
+          java -version
+          sdkmanager --version || $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --version
 
-      - name: Verifier fichiers
+      - name: Fichiers de verification
         run: |
           ls -la
           ls -la images/
@@ -36,7 +46,7 @@ jobs:
           test -f images/icon.png && echo "icon.png OK"
           test -f images/splash.png && echo "splash.png OK"
 
-      - name: Creer projet Capacitor
+      - name: Projet Creer Condensateur
         run: |
           mkdir -p www
           cp index.html www/index.html
@@ -49,18 +59,18 @@ jobs:
           npx cap add android
           npx cap sync android
 
-      - name: Build APK Debug
+      - name: Debogage de la generation de l'APK
         run: |
           cd android
           chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
       - name: Renommer APK
         run: |
           cp android/app/build/outputs/apk/debug/app-debug.apk Changeur-de-Voix-by-KIBWE-ZONGWE-Israel.apk
           ls -lh *.apk
 
-      - name: Uploader APK
+      - name: APK de telechargement
         uses: actions/upload-artifact@v4
         with:
           name: Changeur-de-Voix-APK
