@@ -10,11 +10,6 @@ jobs:
     name: Creer APK
     runs-on: ubuntu-latest
 
-    env:
-      ANDROID_HOME: /usr/lib/android-sdk
-      ANDROID_SDK_ROOT: /usr/lib/android-sdk
-      JAVA_HOME: /usr/lib/jvm/temurin-17-jdk-amd64
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -33,10 +28,11 @@ jobs:
       - name: Verifier SDK Android deja installe
         run: |
           echo "ANDROID_HOME=$ANDROID_HOME"
-          ls -la /usr/lib/android-sdk/
-          ls -la $ANDROID_HOME/platform-tools/ | head -20
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+          echo "JAVA_HOME=$JAVA_HOME"
+          ls -la "$ANDROID_HOME"
+          ls -la "$ANDROID_HOME/platform-tools" | head -20
           java -version
-          sdkmanager --version || $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --version
 
       - name: Fichiers de verification
         run: |
